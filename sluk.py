@@ -229,7 +229,7 @@ def update_feeds(update_feed_name=u"All"):
     for entry in parsed.entries:
       lnk = ""
       if 'link' not in entry:
-        if 'enclosures' in entry and len(enclosures) > 0 and 'href' in entry.enclosures[0]:
+        if 'enclosures' in entry and len(entry.enclosures) > 0 and 'href' in entry.enclosures[0]:
           lnk = entry.enclosures[0].href
         else:
           print_optionally("Warning! Skipping entry in feed %s that lacks both href enclosure and entry element!" % feed)
