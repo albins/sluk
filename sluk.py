@@ -10,7 +10,8 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from email.errors import HeaderParseError
 import json
-import commands
+#import commands
+import subprocess
 import feedparser
 import fileinput
 import traceback
@@ -284,7 +285,13 @@ def update_feeds(update_feed_name=u"All"):
             enc = sys.stdout.encoding
           else:
             enc = "utf-8"
-          content = unicode(commands.getoutput(conf.get("filters", bodyfilter).replace("{url}", link)), encoding=enc)
+          command = conf.get("filters", bodyfilter).split()
+          command[command.index('{url}')] = link
+          try:
+            content = unicode(subprocess.check_output(command), encoding=enc)
+          except subprocess.CalledProcessError:
+            print_optionally("Warning, post-process failed!")
+            content = link
 
         # We're encoding everything as utf-8 explicitly, because sadly, the MIME module won't do that for us.
 
