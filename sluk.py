@@ -231,12 +231,12 @@ def update_feeds(update_feed_name=u"All"):
       lnk = ""
       if 'link' not in entry:
         if 'enclosures' in entry and len(entry.enclosures) > 0 and 'href' in entry.enclosures[0]:
-          lnk = entry.enclosures[0].href
+          lnk = unicode(entry.enclosures[0].href, encoding=parsed.encoding)
         else:
           print_optionally("Warning! Skipping entry in feed %s that lacks both href enclosure and entry element!" % feed)
           continue # If the entry has neither link nor href element, it's clearly not a feed -- skip it.
       else:
-        lnk = entry.link
+        lnk = unicode(entry.link)
 
       # If lnk is NOT in cache_entries, append it to
       # cache_entries_new and proceed as usual.
@@ -291,7 +291,7 @@ def update_feeds(update_feed_name=u"All"):
             content = unicode(subprocess.check_output(command), encoding=enc)
           except subprocess.CalledProcessError:
             print_optionally("Warning, post-process failed!")
-            content = link
+            content = unicode(link)
 
         # We're encoding everything as utf-8 explicitly, because sadly, the MIME module won't do that for us.
 
@@ -349,7 +349,7 @@ def update_feeds(update_feed_name=u"All"):
   try:
     print_optionally("I: Updating entries cache: '%s'" % cache_entries_file)
     with codecs.open(cache_entries_file, 'a', encoding="utf-8") as f:  # append, not write
-      f.write(cache_entries_new.encode(parsed.encoding))
+      f.write(cache_entries_new)
   except IOError:
     print_optionally("E: Failed writing to entries cache file: '%s'" % cache_entries_file)
 
