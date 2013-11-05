@@ -288,9 +288,12 @@ def update_feeds(update_feed_name=u"All"):
           command = conf.get("filters", bodyfilter).split()
           command[command.index('{url}')] = link
           try:
-            content = unicode(subprocess.check_output(command), encoding=enc)
-          except subprocess.CalledProcessError:
+            DEVNULL = open(os.devnull, 'wb')
+            stdout = subprocess.check_output(command, stderr=DEVNULL)
+            content = unicode(stdout, encoding=enc)
+          except subprocess.CalledProcessError as e:
             print_optionally("Warning, post-process failed!")
+            print_optionally(unicode(e.output, encoding=enc))
             content = unicode(link)
 
         # We're encoding everything as utf-8 explicitly, because sadly, the MIME module won't do that for us.
